@@ -1,0 +1,26 @@
+article.post {
+  .post-date { font-size: 1.4rem; }
+  .post-title { margin: 0; }
+
+  section.post-content {
+    p {
+      font-size: 18px;
+      line-height: 2;
+    }
+  }
+
+  section.footer {
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+    p { padding: 1rem; }
+  }
+
+  code {
+    font-size: 1.1rem;
+  }
+}
+
+article.post-preview {
+  .post-date { font-size: 1.4rem; }
+  .post-title { margin: 0; }
+}

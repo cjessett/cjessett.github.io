@@ -1,0 +1,30 @@
+---
+layout: default
+---
+
+{% include nav.html %}
+
+<article class="post small-12 large-8 large-offset-2 columns">
+  <div class="post-date">{{ page.date | date: "%b %e %Y" }}</div>
+  <h2 class="post-title">{{ page.title }}</h2>
+  <div>
+    <a
+      href="https://twitter.com/share"
+      class="twitter-share-button"
+      data-show-count="false">
+    </a>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+  <section class="post-content">
+    {{ content }}
+  </section>
+
+  <section class="footer">
+    <hr>
+    <p>
+      Thanks for reading! Feel free to <a href="{{ site.twitter }}">tweet</a> at me with any questions or shoot me an <a href="mailto:cjessett@utexas.edu">email</a>.
+    </p>
+    <hr>
+  </section>
+</article>

@@ -1,0 +1,37 @@
+title: CJ Jessett
+description: >
+  CJ Jessett. I'm a web developer, rock climber, and skiing enthusiast.
+
+permalink: pretty
+url: //cjessett.github.io
+
+email: me@cjjessett.com
+twitter: //twitter.com/kep20f
+github:  //github.com/cjessett
+linkedin: //linkedin.com/in/cjessett
+instagram: //instagram.com/cjessett
+
+# Build settings
+markdown: kramdown
+sass:
+  sass_dir: css
+
+# Default extension for new posts and pages
+post_ext: markdown
+page_ext: html
+
+# Default templates for posts and pages
+# Found in _templates/
+post_layout: post
+page_layout: page
+
+# Format titles with titlecase?
+titlecase: true
+
+# Change default template file (in _templates/)
+post_template: post
+page_template: page
+draft_template: draft
+
+gems:
+  - octopress-debugger

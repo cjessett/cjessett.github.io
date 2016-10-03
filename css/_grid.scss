@@ -1,0 +1,33 @@
+.column, .columns {
+  width: 100%;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+}
+
+@media screen and (min-width: 40em) {
+.column, .columns {
+  padding-left: 0.9375rem;
+  padding-right: 0.9375rem; }
+}
+
+.small-12 {
+  width: 100%;
+}
+
+@media screen and (min-width: 40em) {
+.medium-8 {
+  width: 66.66667%; }
+.medium-offset-2 {
+  margin-left: 16.66667%; }
+}
+
+@media screen and (min-width: 64em) {
+.large-8 {
+  width: 66.66667%; }
+.large-offset-2 {
+  margin-left: 16.66667%; }
+.large-6 {
+  width: 50%; }
+.large-offset-3 {
+  margin-left: 25%; }
+}

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,700,800|Raleway:400,200,700" rel="stylesheet" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" type="text/css" href="//localhost:4000/css/main.css">
+    <link rel="shortcut icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CJ Jessett. I'm a web developer, rock climber, and skiing enthusiast.
+">
+    <title>Create Github repos from the command line - CJ Jessett</title>
+</head>
+
+
+  <body class="min-height">
+
+
+
+<nav class="columns">
+  <ul>
+    <li class=""><h4><a href="//localhost:4000">Homepage</a></h4></li>
+    <li class=""><h4><a href="//localhost:4000/blog">Posts</a></h4></li>
+  </ul>
+</nav>
+
+
+<article class="post small-12 large-8 large-offset-2 columns">
+  <div class="post-date">Oct  1 2016</div>
+  <h2 class="post-title">Create Github repos from the command line</h2>
+  <div>
+    <a
+      href="https://twitter.com/share"
+      class="twitter-share-button"
+      data-show-count="false">
+    </a>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+  <section class="post-content">
+    <h3 id="because-why-not">Because why not</h3>
+
+<p>This is an annotated version of <a href="https://www.viget.com/articles/create-a-github-repo-from-the-command-line">this original post</a> and a useful intro into bash scripting.</p>
+
+<p>The command that does the work:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+curl -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repo_name'"}' &gt; /dev/null 2&gt;&amp;1
+
+</code></pre>
+</div>
+
+<p>Where <code class="highlighter-rouge">$username</code>, <code class="highlighter-rouge">$token</code>, and <code class="highlighter-rouge">$repo_name</code> are your github username, personal access token, and desired repository name respectively.</p>
+
+<p>We can wrap this in a sweet bash function to do this on the fly from a local git repo. In your <code class="highlighter-rouge">~/.bash_profile</code>:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+github-create() {
+
+  # assign $repo_name to argument if present
+  repo_name=$1
+
+  # capture the name of the current directory
+  dir_name=`basename $(pwd)`
+
+  # assign user input to $repo_name if argument was empty
+  if [ "$repo_name" = "" ]; then
+  echo "Repo name (hit enter to use '$dir_name')?"
+  read repo_name
+  fi
+
+  # assign the current directory to $repo_name if not specified by input above
+  if [ "$repo_name" = "" ]; then
+  repo_name=$dir_name
+  fi
+
+}
+
+</code></pre>
+</div>
+
+<p>This creates a function you can call in your terminal and pass an optional argument. The first line will store the argument passed to the function in the variable <code class="highlighter-rouge">$repo_name</code>.</p>
+
+<p>The next line creates a default repository name in the case no argument is passed to the function. The command <code class="highlighter-rouge">basename $(pwd)</code> will print the name of the current directory, try it in the terminal.</p>
+
+<p>Next, a conditional to check for the presence of an argument. If no argument was provided, the conditional reads from user input and assigns the result to <code class="highlighter-rouge">$repo_name</code>.</p>
+
+<p>The last conditional assigns the current directory name to <code class="highlighter-rouge">$repo_name</code> in the case no input was provided. If you’re curious about what’s going on here add <code class="highlighter-rouge">echo "$repo_name"</code> at the bottom of the function then open a new terminal tab and call the function with  <code class="highlighter-rouge">github-create</code>. Then try it with an argument.</p>
+
+<p>Next, we’ll set the username and token variables to use in our API call.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+github-create() {
+
+  repo_name=$1
+
+  dir_name=`basename $(pwd)`
+
+  if [ "$repo_name" = "" ]; then
+  echo "Repo name (hit enter to use '$dir_name')?"
+  read repo_name
+  fi
+
+  if [ "$repo_name" = "" ]; then
+  repo_name=$dir_name
+  fi
+
+  # this sets $username to the result of the command 'git config github.user'
+  username=`git config github.user`
+  if [ "$username" = "" ]; then
+  echo "Could not find username, run 'git config --global github.user &lt;username&gt;'"
+  invalid_credentials=1
+  fi
+
+  # this sets $token to the result of the command 'git config github.token'
+  token=`git config github.token`
+  if [ "$token" = "" ]; then
+  echo "Could not find token, run 'git config --global github.token &lt;token&gt;'"
+  invalid_credentials=1
+  fi
+
+  # return from the function if the credentials are not found
+  if [ "$invalid_credentials" == "1" ]; then
+  return 1
+  fi
+
+}
+
+</code></pre>
+</div>
+
+<p>Here we check for a github username and token that have been set in the <code class="highlighter-rouge">~/.gitconfig</code> file. You can find info about setting options with <code class="highlighter-rouge">git config</code> <a href="https://git-scm.com/docs/git-config">here</a>.</p>
+
+<p>To check if you have set git config options run <code class="highlighter-rouge">git config -l</code> to list all of your config options. You can also run ` git config ` for help with the command.</p>
+
+<p>Running the command <code class="highlighter-rouge">git config --global github.user &lt;YOUR_USERNAME&gt;</code>, and likewise with <code class="highlighter-rouge">github.token</code>, will write to <code class="highlighter-rouge">~/.gitconfig</code> like so:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># ~/.gitconfig
+
+[github]
+  user: &lt;YOUR_USERNAME&gt;
+  token: &lt;YOUR_TOKEN&gt;
+
+</code></pre>
+</div>
+
+<p>I set my username and token with the commands above after <a href="https://github.com/settings/tokens">generating</a> a <a href="//github.com/blog/1509-personal-api-tokens">personal API token</a> with appropriate scopes. This allows you to make authenticated requests to your <a href="//github.com">GitHub</a> account.</p>
+
+<p>Now lets add the curl request.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+github-create() {
+
+  repo_name=$1
+
+  dir_name=`basename $(pwd)`
+
+  if [ "$repo_name" = "" ]; then
+  echo "Repo name (hit enter to use '$dir_name')?"
+  read repo_name
+  fi
+
+  if [ "$repo_name" = "" ]; then
+  repo_name=$dir_name
+  fi
+
+  username=`git config github.user`
+  if [ "$username" = "" ]; then
+  echo "Could not find username, run 'git config --global github.user &lt;username&gt;'"
+  invalid_credentials=1
+  fi
+
+  token=`git config github.token`
+  if [ "$token" = "" ]; then
+  echo "Could not find token, run 'git config --global github.token &lt;token&gt;'"
+  invalid_credentials=1
+  fi
+
+  if [ "$invalid_credentials" == "1" ]; then
+  return 1
+  fi
+
+  # echo some useful feedback and make a request to the API
+  echo -n "Creating Github repository '$repo_name' ..."
+  curl -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repo_name'"}' &gt; /dev/null 2&gt;&amp;1
+  echo " done."
+
+}
+
+</code></pre>
+</div>
+
+<p>This makes a request to the <code class="highlighter-rouge">/user/repos</code> <a href="https://developer.github.com/v3/repos/#create">endpoint</a> using <a href="https://developer.github.com/v3/auth/#basic-authentication">basic authentication</a> to create a new GitHub repository.</p>
+
+<p>That last bit of the <code class="highlighter-rouge">curl</code> command, <code class="highlighter-rouge">&gt; /dev/null 2&gt;&amp;1</code> basically redirects and discards the standard output of the request, check out <a href="https://stackoverflow.com/questions/10508843/what-is-dev-null-21#10508862">this stackoverflow question</a> for more info.</p>
+
+<p>Finally, we add a remote named <code class="highlighter-rouge">origin</code> for the repo we just created and push up our code.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+github-create() {
+
+  repo_name=$1
+
+  dir_name=`basename $(pwd)`
+
+  if [ "$repo_name" = "" ]; then
+  echo "Repo name (hit enter to use '$dir_name')?"
+  read repo_name
+  fi
+
+  if [ "$repo_name" = "" ]; then
+  repo_name=$dir_name
+  fi
+
+  username=`git config github.user`
+  if [ "$username" = "" ]; then
+  echo "Could not find username, run 'git config --global github.user &lt;username&gt;'"
+  invalid_credentials=1
+  fi
+
+  token=`git config github.token`
+  if [ "$token" = "" ]; then
+  echo "Could not find token, run 'git config --global github.token &lt;token&gt;'"
+  invalid_credentials=1
+  fi
+
+  if [ "$invalid_credentials" == "1" ]; then
+  return 1
+  fi
+
+  echo -n "Creating Github repository '$repo_name' ..."
+  curl -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repo_name'"}' &gt; /dev/null 2&gt;&amp;1
+  echo " done."
+
+  # add repo to remote as 'origin' and push the code up
+  echo -n "Pushing local code to remote ..."
+  git remote add origin git@github.com:$username/$repo_name.git &gt; /dev/null 2&gt;&amp;1
+  git push -u origin master &gt; /dev/null 2&gt;&amp;1
+  echo " done."
+
+}
+
+</code></pre>
+</div>
+
+<p>Now if you open a new terminal window you can call <code class="highlighter-rouge">github-create</code> with an optional argument and you won’t have to leave the comfort of that terminal to create a new GitHub repo!</p>
+
+  </section>
+
+  <section class="footer">
+    <hr>
+    <p>
+      Thanks for reading! Feel free to <a href="//twitter.com/kep20f">tweet</a> at me with any questions or shoot me an <a href="mailto:cjessett@utexas.edu">email</a>.
+    </p>
+    <hr>
+  </section>
+</article>
+
+
+
+    
+      <footer class="columns">
+        <div class="small-12 large-8 large-offset-2">
+          <ul class="list-1">
+            <li><h4>CJ Jessett</h4></li>
+            <li><a href="mailto:cjessett@utexas.edu">cjessett@utexas.edu</a></li>
+          </ul>
+          <ul class="list-2">
+            <li>
+              <span><i class="fa fa-github"></i></span>
+              <a href="//github.com/cjessett">cjessett</a>
+            </li>
+            <li>
+              <span><i class="fa fa-twitter"></i></span>
+              <a href="//twitter.com/kep20f">kep20f</a>
+            </li>
+          </ul>
+        </div>
+      </footer>
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+
+
