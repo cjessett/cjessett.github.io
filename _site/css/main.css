@@ -83,7 +83,8 @@ h4 {
   font-size: 1.3rem; }
 
 a:hover {
-  color: #0a0a0a; }
+  color: #0a0a0a;
+  text-decoration: underline; }
 
 a {
   color: #8bad00;

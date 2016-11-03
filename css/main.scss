@@ -35,7 +35,10 @@ h3 { font-size: 1.9375rem; }
 
 h4 { font-size: 1.3rem; }
 
-a:hover { color: $font-color; }
+a:hover {
+  color: $font-color;
+  text-decoration: underline;
+}
 
 a {
   color: #8bad00;
