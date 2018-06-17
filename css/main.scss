@@ -58,6 +58,40 @@ body {
   background: #fefefe;
   -webkit-font-smoothing: antialiased;
 
+  .projects {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 10vh;
+    align-items: flex-start;
+    a { color: inherit;}
+    .icon {
+      margin: .3em;
+    }
+    .card {
+      flex: 0 0 250px;
+      max-width: 14em;
+      header {
+        margin: .5em 0 .5em 0;
+      }
+      img {
+        width: 50%;
+        height: auto;
+      }
+      #raven-ridge {
+        margin: 0;
+      }
+      .card-image {
+        margin-bottom: 1em;
+      }
+      #buoyfeed {
+        width: 30%;
+      }
+      #npr {
+        margin-top: 1.3em;
+      }
+    }
+  }
+
   nav {
     border-bottom: 1px solid #e8e8e8;
     margin-bottom: 2rem;
