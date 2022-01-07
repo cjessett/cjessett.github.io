@@ -7,6 +7,7 @@
 
 $font-stack: "Maison Neue", Helvetica Neue, Helvetica, Arial , sans-serif;
 $font-color: #3b3a3a;
+$theme-color: rgb(8,47,212);
 
 .right { float: right; }
 .left { float: left; }
@@ -42,7 +43,7 @@ a:hover {
 }
 
 a {
-  color: rgb(8,47,212);
+  color: $theme-color;
   text-decoration: none;
   line-height: inherit;
   cursor: pointer;
@@ -93,7 +94,7 @@ body {
   }
 
   nav {
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid $theme-color;
     margin-bottom: 2rem;
 
     li {
@@ -146,7 +147,7 @@ body {
   }
   
   footer {
-    border-top: 1px solid #e8e8e8;
+    border-top: 1px solid $theme-color;
     position: absolute;
     height: 6rem;
     bottom: 0;
